@@ -8,11 +8,7 @@ const origins = [
   "https://frontend-library-management-iqu8fhz3g-ajay-mores-projects.vercel.app/",
 ];
 const app = express();
-app.use(
-  cors({
-    origin: origins,
-  })
-);
+app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
