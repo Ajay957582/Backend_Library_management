@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("hello");
+  res.json({ message: "hello" });
 });
 
 app.post("/register", async (req, res) => {
@@ -140,24 +140,28 @@ app.post("/issuebook", async (req, res) => {
     enrollment_number: req.body.searchedEnrollment,
   });
 
-  if (!book) {
-    res.json({ message: "Can't find any book by this book Id" });
+  if (!user.books.some((elem) => elem.bookId === req.body.bookId)) {
+    if (!book) {
+      res.json({ message: "Can't find any book by this book Id" });
+    } else {
+      // console.log(book);
+      // console.log(user);
+      const date = new Date();
+      const updatedUser = await User.findOneAndUpdate(
+        {
+          enrollment_number: req.body.searchedEnrollment,
+        },
+        { $addToSet: { books: { bookId: book.bookId, issueDate: date } } },
+        { new: true }
+      );
+      // console.log(updatedUser);
+      res.json({
+        message: "book Updates Successfully!!",
+        booksList: updatedUser.books,
+      });
+    }
   } else {
-    // console.log(book);
-    // console.log(user);
-    const date = new Date();
-    const updatedUser = await User.findOneAndUpdate(
-      {
-        enrollment_number: req.body.searchedEnrollment,
-      },
-      { $addToSet: { books: { bookId: book.bookId, issueDate: date } } },
-      { new: true }
-    );
-    // console.log(updatedUser);
-    res.json({
-      message: "book Updates Successfully!!",
-      booksList: updatedUser.books,
-    });
+    res.json({ message: "book already exists" });
   }
 });
 
