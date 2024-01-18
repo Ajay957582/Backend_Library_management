@@ -4,9 +4,15 @@ import { User } from "./user.model.js";
 import { Admin } from "./adminList.model.js";
 import jwt, { decode } from "jsonwebtoken";
 import { Book } from "./book.model.js";
-
+const origins = [
+  "https://frontend-library-management-iqu8fhz3g-ajay-mores-projects.vercel.app/",
+];
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: origins,
+  })
+);
 app.use(express.json());
 
 app.get("/", (req, res) => {
